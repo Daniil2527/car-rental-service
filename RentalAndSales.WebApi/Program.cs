@@ -1,10 +1,17 @@
+
+using MediatR;
 using Microsoft.EntityFrameworkCore;
+using RentalAndSales.Application.Cars.Commands;
 using RentalAndSales.Infrastructure.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Controllers
 builder.Services.AddControllers();
+
+builder.Services.AddMediatR(configuration =>
+    configuration.RegisterServicesFromAssemblyContaining<CreateCarCommand>());
+builder.Services.AddAutoMapper(typeof(CreateCarCommand)); 
 
 // Infrastructure: DbContext + Repositories
 builder.Services.AddInfrastructure(builder.Configuration);
