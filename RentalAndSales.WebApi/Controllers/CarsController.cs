@@ -18,22 +18,25 @@ public class CarsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CarDto dto, CancellationToken cancellationToken)
+    public async Task<ActionResult<Guid>> Create([FromBody] CarDto dto, CancellationToken cancellationToken)
     {
         var command = new CreateCarCommand(dto);
         var carId = await _mediator.Send(command, cancellationToken);
-        return CreatedAtAction(nameof(GetById), new { id = carId }, new { id = carId });
+        return CreatedAtAction(nameof(GetById), new { id = carId }, carId);
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
+    public async Task<ActionResult<CarDto>> GetById(Guid id, CancellationToken cancellationToken)
     {
         var car = await _mediator.Send(new GetCarByIdQuery(id), cancellationToken);
-        return car is null ? NotFound() : Ok(car);
+        if (car is null)
+            return NotFound();
+
+        return car;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    public async Task<ActionResult<List<CarDto>>> GetAll(CancellationToken cancellationToken)
     {
         var cars = await _mediator.Send(new GetAllCarsQuery(), cancellationToken);
         return Ok(cars);
