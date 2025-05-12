@@ -21,7 +21,7 @@ public class CreateCarHandler : IRequestHandler<CreateCarCommand, Guid>
         var car = _mapper.Map<Car>(request.Car);
         car.Id = Guid.NewGuid();
 
-        await _carRepository.AddAsync(car);
+        await _carRepository.AddAsync(car, cancellationToken);
         return car.Id;
     }
 }

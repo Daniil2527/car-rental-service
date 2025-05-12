@@ -19,7 +19,7 @@ public class GetCarByIdHandler: IRequestHandler<GetCarByIdQuery, CarDto?>
 
     public async Task<CarDto?> Handle(GetCarByIdQuery request, CancellationToken cancellationToken)
     {
-        var car = await _carRepository.GetByIdAsync(request.Id);
+        var car = await _carRepository.GetByIdAsync(request.Id, cancellationToken);
         return car is null ? null : _mapper.Map<CarDto>(car);
     }
 }

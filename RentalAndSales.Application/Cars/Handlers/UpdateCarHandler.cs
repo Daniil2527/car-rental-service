@@ -18,14 +18,14 @@ public class UpdateCarHandler: IRequestHandler<UpdateCarCommand, bool>
 
     public async Task<bool> Handle(UpdateCarCommand request, CancellationToken cancellationToken)
     {
-        var existingCar = await _carRepository.GetByIdAsync(request.Id);
+        var existingCar = await _carRepository.GetByIdAsync(request.Id, cancellationToken);
         if (existingCar is null)
             return false;
 
         // Обновляем значения из DTO
         _mapper.Map(request.Car, existingCar);
 
-        await _carRepository.UpdateAsync(existingCar);
+        await _carRepository.UpdateAsync(existingCar, cancellationToken);
         return true;
     }
 }
