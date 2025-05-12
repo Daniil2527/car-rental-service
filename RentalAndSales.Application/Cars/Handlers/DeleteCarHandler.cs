@@ -18,11 +18,11 @@ public class DeleteCarHandler: IRequestHandler<DeleteCarCommand, bool>
 
     public async Task<bool> Handle(DeleteCarCommand request, CancellationToken cancellationToken)
     {
-        var existingCar = await _carRepository.GetByIdAsync(request.Id);
+        var existingCar = await _carRepository.GetByIdAsync(request.Id, cancellationToken);
         if (existingCar is null)
             return false;
 
-        await _carRepository.DeleteAsync(request.Id);
+        await _carRepository.DeleteAsync(existingCar, cancellationToken);
         return true;
     }
 }

@@ -19,7 +19,7 @@ public class GetAllCarsHandler:IRequestHandler<GetAllCarsQuery, List<CarDto>>
 
     public async Task<List<CarDto>> Handle(GetAllCarsQuery request, CancellationToken cancellationToken)
     {
-        var cars = await _carRepository.GetAllAsync();
+        var cars = await _carRepository.GetAllAsync(cancellationToken);
 
         return _mapper.Map<List<CarDto>>(cars);
     }
