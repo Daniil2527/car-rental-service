@@ -1,8 +1,11 @@
 using MediatR;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using RentalAndSales.Application.Users.Commands;
 using RentalAndSales.Application.Users.DTOs;
 using RentalAndSales.Application.Users.Queries;
+using LoginRequest = RentalAndSales.Application.Users.DTOs.LoginRequest;
+
 
 namespace RentalAndSales.WebApi.Controllers;
 
@@ -57,4 +60,12 @@ public class UsersController : ControllerBase
         var result = await _mediator.Send(new DeleteUserCommand(id), cancellationToken);
         return result ? NoContent() : NotFound();
     }
+    
+    [HttpPost("login")]
+    public async Task<ActionResult<UserDto>> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new LoginCommand(request.Email, request.Password), cancellationToken);
+        return result is null ? Unauthorized() : Ok(result);
+    }
+    
 }
