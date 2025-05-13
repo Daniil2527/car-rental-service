@@ -45,4 +45,9 @@ public class UserRepository: IUserRepository
         _context.Users.Remove(user);
         await _context.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken)
+    {
+        return await _context.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+    }
 }

@@ -20,6 +20,7 @@ public class CreateUserHandler:IRequestHandler<CreateUserCommand, Guid>
     {
         var user = _mapper.Map<User>(request);
         user.Id = Guid.NewGuid();
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash);
         await _userRepository.AddAsync(user, cancellationToken);
         return user.Id;
         
