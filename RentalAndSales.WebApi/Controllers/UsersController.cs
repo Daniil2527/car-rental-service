@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using RentalAndSales.Application.Users.Commands;
@@ -39,6 +40,7 @@ public class UsersController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = userId }, userId);
     }
     
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<List<UserDto>>> GetAll(CancellationToken cancellationToken)
     {
@@ -46,6 +48,7 @@ public class UsersController : ControllerBase
         return Ok(users);
     }
     
+    [Authorize]
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UserDto dto, CancellationToken cancellationToken)
     {
@@ -54,6 +57,7 @@ public class UsersController : ControllerBase
         return success ? NoContent() : NotFound();
     }
     
+    [Authorize]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
