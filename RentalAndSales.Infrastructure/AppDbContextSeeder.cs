@@ -32,6 +32,7 @@ public static class AppDbContextSeeder
             Price = 15000,
             Description = "Надёжный седан",
             IsForRent = false,
+            Color = "White", 
             OwnerId = user.Id
         };
 
@@ -44,6 +45,7 @@ public static class AppDbContextSeeder
             Price = 35000,
             Description = "Электромобиль",
             IsForRent = true,
+            Color = "Red",
             OwnerId = user.Id
         };
 

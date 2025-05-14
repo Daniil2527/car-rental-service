@@ -50,6 +50,8 @@ public class AppDbContext : DbContext
         carBuilder.Property(c => c.Brand)
             .IsRequired()
             .HasMaxLength(50);
+        carBuilder.Property(c => c.Color)
+            .HasMaxLength(30);
 
         carBuilder.Property(c => c.Model)
             .IsRequired()
