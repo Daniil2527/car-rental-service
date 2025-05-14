@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RentalAndSales.Application.Orders.Commands;
 using RentalAndSales.Application.Orders.DTOs;
@@ -6,6 +7,7 @@ using RentalAndSales.Application.Orders.Queries;
 
 namespace RentalAndSales.WebApi.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class OrdersController : ControllerBase

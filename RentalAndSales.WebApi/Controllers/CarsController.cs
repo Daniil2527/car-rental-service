@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RentalAndSales.Application.Cars.Commands;
 using RentalAndSales.Application.Cars.DTOs;
@@ -16,7 +17,8 @@ public class CarsController : ControllerBase
     {
         _mediator = mediator;
     }
-
+    
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<Guid>> Create([FromBody] CarDto dto, CancellationToken cancellationToken)
     {
@@ -41,7 +43,8 @@ public class CarsController : ControllerBase
         var cars = await _mediator.Send(new GetAllCarsQuery(), cancellationToken);
         return Ok(cars);
     }
-
+    
+    [Authorize]
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] CarDto dto, CancellationToken cancellationToken)
     {
@@ -49,7 +52,7 @@ public class CarsController : ControllerBase
         var success = await _mediator.Send(command, cancellationToken);
         return success ? NoContent() : NotFound();
     }
-
+    [Authorize]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {

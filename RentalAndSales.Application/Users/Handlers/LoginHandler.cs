@@ -1,12 +1,13 @@
 using AutoMapper;
 using MediatR;
+using RentalAndSales.Application.Common.Models;
 using RentalAndSales.Application.Users.Commands;
 using RentalAndSales.Application.Users.DTOs;
 using RentalAndSales.Domain;
 
 namespace RentalAndSales.Application.Users.Handlers;
 
-public class LoginHandler: IRequestHandler<LoginCommand, UserDto?>
+public class LoginHandler : IRequestHandler<LoginCommand, Result<UserDto>>
 {
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
@@ -17,16 +18,17 @@ public class LoginHandler: IRequestHandler<LoginCommand, UserDto?>
         _mapper = mapper;
     }
 
-    public async Task<UserDto?> Handle(LoginCommand request, CancellationToken cancellationToken)
+    public async Task<Result<UserDto>> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetByEmailAsync(request.Email, cancellationToken);
-        if(user == null)
-            return null;
-        
+        if (user is null)
+            return Result<UserDto>.Failure("Пользователь не найден");
+
         bool isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
         if (!isPasswordValid)
-            return null;
+            return Result<UserDto>.Failure("Неверный пароль");
 
-        return _mapper.Map<UserDto>(user);
+        var userDto = _mapper.Map<UserDto>(user);
+        return Result<UserDto>.Success(userDto);
     }
 }

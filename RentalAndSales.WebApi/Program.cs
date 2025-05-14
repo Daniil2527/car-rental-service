@@ -1,12 +1,16 @@
 
+using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using RentalAndSales.Application.Cars.Commands;
 using RentalAndSales.Application.Users.Validators;
 using RentalAndSales.Infrastructure;
+using RentalAndSales.Infrastructure.Auth;
 using RentalAndSales.Infrastructure.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,11 +19,28 @@ builder.Services.AddControllers();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<LoginRequestValidator>();
 
+// JWT config
+var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings.Issuer,
+            ValidAudience = jwtSettings.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
+        };
+    });
+
+// App services
 builder.Services.AddMediatR(configuration =>
     configuration.RegisterServicesFromAssemblyContaining<CreateCarCommand>());
-builder.Services.AddAutoMapper(typeof(CreateCarCommand)); 
-
-// Infrastructure: DbContext + Repositories
+builder.Services.AddAutoMapper(typeof(CreateCarCommand));
 builder.Services.AddInfrastructure(builder.Configuration);
 
 // Swagger
@@ -36,10 +57,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// 🔐 ВАЖНО: auth всегда должен быть включён
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
+// Сидинг
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
