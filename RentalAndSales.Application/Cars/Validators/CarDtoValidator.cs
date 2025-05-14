@@ -17,5 +17,9 @@ public class CarDtoValidator: AbstractValidator<CarDto>
 
         RuleFor(x => x.Price)
             .GreaterThan(0).WithMessage("Price must be greater than zero.");
+        
+        RuleFor(x => x.Color)
+            .NotEmpty().WithMessage("Color is required.")
+            .MaximumLength(30).WithMessage("Color must be at most 30 characters.");
     }
 }
