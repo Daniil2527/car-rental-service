@@ -3,9 +3,9 @@ using RentalAndSales.Application.Users.DTOs;
 
 namespace RentalAndSales.Application.Users.Validators;
 
-public class UserDtoValidator: AbstractValidator<UserDto>
+public class CreateUserRequestValidator: AbstractValidator<CreateUserRequest>
 {
-    public UserDtoValidator()
+    public CreateUserRequestValidator()
     {
         RuleFor(x => x.FullName)
             .NotEmpty().WithMessage("Full name is required.")
@@ -19,7 +19,7 @@ public class UserDtoValidator: AbstractValidator<UserDto>
             .NotEmpty().WithMessage("Phone number is required.")
             .Matches(@"^\+?\d{7,20}$").WithMessage("Phone number format is invalid.");
 
-        RuleFor(x => x.PasswordHash)
+        RuleFor(x => x.Password)
             .NotEmpty().WithMessage("Password is required.")
             .MinimumLength(6).WithMessage("Password must be at least 6 characters.");
     }

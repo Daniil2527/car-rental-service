@@ -32,9 +32,9 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Guid>> Create([FromBody] UserDto dto, CancellationToken cancellationToken)
+    public async Task<ActionResult<Guid>> Create([FromBody] CreateUserRequest request, CancellationToken cancellationToken)
     {
-        var command = new CreateUserCommand(dto);
+        var command = new CreateUserCommand(request);
         var userId = await _mediator.Send(command, cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = userId }, userId);
     }

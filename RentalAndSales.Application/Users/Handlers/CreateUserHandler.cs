@@ -18,9 +18,9 @@ public class CreateUserHandler:IRequestHandler<CreateUserCommand, Guid>
 
     public async Task<Guid> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
-        var user = _mapper.Map<User>(request);
+        var user = _mapper.Map<User>(request.Request);
         user.Id = Guid.NewGuid();
-        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash);
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Request.Password);
         await _userRepository.AddAsync(user, cancellationToken);
         return user.Id;
         
