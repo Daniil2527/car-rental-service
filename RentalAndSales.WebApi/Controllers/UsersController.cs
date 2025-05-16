@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
+using RentalAndSales.Application.Common.Extensions;
 using RentalAndSales.Application.Users.Commands;
 using RentalAndSales.Application.Users.DTOs;
 using RentalAndSales.Application.Users.Queries;
@@ -23,46 +24,43 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<UserDto>> GetById(Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
-        var user = await _mediator.Send(new GetUserByIdQuery(id), cancellationToken);
-        if (user is null)
-            return NotFound();
-
-        return user;
+        var result = await _mediator.Send(new GetUserByIdQuery(id), cancellationToken);
+    
+        return result.ToActionResult();
     }
 
     [HttpPost]
-    public async Task<ActionResult<Guid>> Create([FromBody] CreateUserRequest request, CancellationToken cancellationToken)
+    [AllowAnonymous] // если доступен без авторизации
+    public async Task<IActionResult> Create([FromBody] CreateUserRequest request, CancellationToken cancellationToken)
     {
-        var command = new CreateUserCommand(request);
-        var userId = await _mediator.Send(command, cancellationToken);
-        return CreatedAtAction(nameof(GetById), new { id = userId }, userId);
+        var result = await _mediator.Send(new CreateUserCommand(request), cancellationToken);
+        return result.ToActionResult();
     }
     
-    [Authorize]
     [HttpGet]
-    public async Task<ActionResult<List<UserDto>>> GetAll(CancellationToken cancellationToken)
+    [Authorize] 
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
-        var users = await _mediator.Send(new GetAllUsersQuery(), cancellationToken);
-        return Ok(users);
+        var result = await _mediator.Send(new GetAllUsersQuery(), cancellationToken);
+        return result.ToActionResult();
     }
     
     [Authorize]
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UserDto dto, CancellationToken cancellationToken)
     {
-        var command = new UpdateUserCommand(id, dto);
-        var success = await _mediator.Send(command, cancellationToken);
-        return success ? NoContent() : NotFound();
+        var result = await _mediator.Send(new UpdateUserCommand(id, dto), cancellationToken);
+        return result.ToActionResult();
     }
     
-    [Authorize]
     [HttpDelete("{id:guid}")]
+    [Authorize]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new DeleteUserCommand(id), cancellationToken);
-        return result ? NoContent() : NotFound();
+        return result.ToActionResult();
     }
     
     [HttpPost("login")]

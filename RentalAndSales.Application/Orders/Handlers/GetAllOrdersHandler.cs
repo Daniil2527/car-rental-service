@@ -1,12 +1,13 @@
 using AutoMapper;
 using MediatR;
+using RentalAndSales.Application.Common.Models;
 using RentalAndSales.Application.Orders.DTOs;
 using RentalAndSales.Application.Orders.Queries;
 using RentalAndSales.Domain;
 
 namespace RentalAndSales.Application.Orders.Handlers;
 
-public class GetAllOrdersHandler: IRequestHandler<GetAllOrdersQuery, List<OrderDto>>
+public class GetAllOrdersHandler : IRequestHandler<GetAllOrdersQuery, Result<List<OrderDto>>>
 {
     private readonly IOrderRepository _repository;
     private readonly IMapper _mapper;
@@ -17,10 +18,9 @@ public class GetAllOrdersHandler: IRequestHandler<GetAllOrdersQuery, List<OrderD
         _mapper = mapper;
     }
 
-    public async Task<List<OrderDto>> Handle(GetAllOrdersQuery request, CancellationToken cancellationToken)
+    public async Task<Result<List<OrderDto>>> Handle(GetAllOrdersQuery request, CancellationToken cancellationToken)
     {
         var orders = await _repository.GetAllAsync(cancellationToken);
-        return _mapper.Map<List<OrderDto>>(orders);
+        return Result<List<OrderDto>>.Success(_mapper.Map<List<OrderDto>>(orders));
     }
-    
 }

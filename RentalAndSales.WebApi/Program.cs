@@ -11,6 +11,7 @@ using RentalAndSales.Infrastructure;
 using RentalAndSales.Infrastructure.Auth;
 using RentalAndSales.Infrastructure.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using RentalAndSales.WebApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,7 +57,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 // 🔐 ВАЖНО: auth всегда должен быть включён
 app.UseAuthentication();
 app.UseAuthorization();

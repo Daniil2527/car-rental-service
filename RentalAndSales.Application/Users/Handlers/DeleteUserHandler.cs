@@ -1,10 +1,11 @@
 using MediatR;
+using RentalAndSales.Application.Common.Models;
 using RentalAndSales.Application.Users.Commands;
 using RentalAndSales.Domain;
 
 namespace RentalAndSales.Application.Users.Handlers;
 
-public class DeleteUserHandler:IRequestHandler<DeleteUserCommand, bool>
+public class DeleteUserHandler : IRequestHandler<DeleteUserCommand, Result<bool>>
 {
     private readonly IUserRepository _userRepository;
 
@@ -13,13 +14,13 @@ public class DeleteUserHandler:IRequestHandler<DeleteUserCommand, bool>
         _userRepository = userRepository;
     }
 
-    public async Task<bool> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result<bool>> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetByIdAsync(request.Id, cancellationToken);
         if (user is null)
-            return false;
+            return Result<bool>.Failure("Пользователь не найден");
 
         await _userRepository.DeleteAsync(user, cancellationToken);
-        return true;
+        return Result<bool>.Success(true);
     }
 }
