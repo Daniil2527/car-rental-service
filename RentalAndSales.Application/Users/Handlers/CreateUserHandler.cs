@@ -26,3 +26,4 @@ public class CreateUserHandler : IRequestHandler<CreateUserCommand, Result<Guid>
         return Result<Guid>.Success(user.Id);
     }
 }
+
