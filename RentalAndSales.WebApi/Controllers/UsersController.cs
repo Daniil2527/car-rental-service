@@ -14,6 +14,7 @@ namespace RentalAndSales.WebApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class UsersController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -64,10 +65,11 @@ public class UsersController : ControllerBase
     }
     
     [HttpPost("login")]
-    public async Task<ActionResult<UserDto>> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
+    [AllowAnonymous]
+    public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new LoginCommand(request.Email, request.Password), cancellationToken);
-        return result is null ? Unauthorized() : Ok(result);
+        return result.ToActionResult();
     }
     
 }
