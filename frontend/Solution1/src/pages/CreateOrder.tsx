@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import {api} from "../api.ts";
 
 type Car = {
     id: string;
@@ -27,14 +29,12 @@ const CreateOrder = () => {
     });
 
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
-    const [success, setSuccess] = useState(false);
 
     useEffect(() => {
         axios
             .get("http://localhost:5123/api/cars")
             .then((res) => setCars(res.data))
-            .catch(() => setError("Не удалось загрузить список машин"))
+            .catch(() => toast.error("Не удалось загрузить машины"))
             .finally(() => setLoading(false));
     }, []);
 
@@ -44,24 +44,22 @@ const CreateOrder = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError("");
-        setSuccess(false);
 
         try {
-            await axios.post(
-                "http://localhost:5123/api/orders",
-                form,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
+            const payload = {
+                CarId: form.carId,
+                BuyerId: form.buyerId,
+                Type: form.type, // ← важен правильный регистр!
+            };
 
-            setSuccess(true);
-            setTimeout(() => navigate("/orders"), 1500);
+            await api.post("/orders", payload, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            toast.success("Заказ успешно создан!");
+            setTimeout(() => navigate("/orders"), 1000);
         } catch {
-            setError("Не удалось создать заказ.");
+            toast.error("Не удалось создать заказ");
         }
     };
 
@@ -70,7 +68,9 @@ const CreateOrder = () => {
             <h1 className="text-2xl font-bold mb-6 text-center">Создание заказа</h1>
 
             {loading ? (
-                <p>Загрузка машин...</p>
+                <div className="flex justify-center">
+                    <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-blue-600"></div>
+                </div>
             ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <select
@@ -97,9 +97,6 @@ const CreateOrder = () => {
                         <option value="Purchase">Покупка</option>
                         <option value="Rent">Аренда</option>
                     </select>
-
-                    {error && <p className="text-red-500 text-sm">{error}</p>}
-                    {success && <p className="text-green-600 text-sm">Заказ создан! Перенаправление...</p>}
 
                     <button
                         type="submit"

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 const Register = () => {
     const { login } = useAuth();
@@ -14,25 +15,22 @@ const Register = () => {
         password: "",
     });
 
-    const [error, setError] = useState("");
-
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError("");
 
         try {
             const response = await axios.post("http://localhost:5123/api/users", form);
             const { token, user } = response.data;
 
             login(token, user);
-            navigate("/orders");
-        } catch (err: any) {
-            console.error("Registration failed:", err);
-            setError("Не удалось зарегистрироваться");
+            toast.success("Регистрация прошла успешно!");
+            setTimeout(() => navigate("/orders"), 1000);
+        } catch {
+            toast.error("Не удалось зарегистрироваться.");
         }
     };
 
@@ -76,8 +74,6 @@ const Register = () => {
                     required
                     className="w-full border rounded p-2"
                 />
-
-                {error && <p className="text-red-500 text-sm">{error}</p>}
 
                 <button
                     type="submit"
