@@ -1,23 +1,43 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../api";
 
-const Orders: React.FC = () => {
-    const [orders, setOrders] = useState([]);
+interface Order {
+    Id: string;
+    BuyerId: string;
+    CarId: string;
+    OrderDate: string;
+    BuyerName: string;
+    CarName: string;
+    Type: string;
+}
+
+const Orders = () => {
+    const [orders, setOrders] = useState<Order[]>([]);
 
     useEffect(() => {
-        api.get("/orders")
-            .then((res) => setOrders(res.data))
-            .catch((err) => console.error("Ошибка загрузки заказов", err));
+        const fetchOrders = async () => {
+            try {
+                const response = await api.get("/orders");
+                console.log("Загруженные заказы:", response.data);
+                setOrders(response.data);
+            } catch (error) {
+                console.error("Ошибка при загрузке заказов:", error);
+            }
+        };
+
+        fetchOrders();
     }, []);
 
     return (
         <div>
             <h2>Ваши заказы</h2>
-            {orders.map((order: any) => (
-                <div key={order.id}>
-                    <p>Машина: {order.car.brand} {order.car.model}</p>
-                    <p>Тип: {order.type}</p>
-                    <p>Статус: {order.status}</p>
+            {orders.map((order) => (
+                <div key={order.Id}>
+                    <p><strong>Машина:</strong> {order.CarName}</p>
+                    <p><strong>Покупатель:</strong> {order.BuyerName}</p>
+                    <p><strong>Тип:</strong> {order.Type}</p>
+                    <p><strong>Дата заказа:</strong> {new Date(order.OrderDate).toLocaleString()}</p>
+                    <hr />
                 </div>
             ))}
         </div>

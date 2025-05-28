@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import api from "../api";
 
 interface Car {
-    id: string;
-    brand: string;
-    model: string;
-    price: number;
+    Id: string;
+    Brand: string;
+    Model: string;
+    Price: number;
+    Color: string;
 }
 
 const Cars: React.FC = () => {
@@ -15,26 +16,29 @@ const Cars: React.FC = () => {
         const fetchCars = async () => {
             try {
                 const response = await api.get("/cars");
+                console.log("🚗 Загруженные машины:", response.data);
                 setCars(response.data);
-            } catch (err) {
-                console.error("Ошибка загрузки машин", err);
+            } catch (error) {
+                console.error("❌ Ошибка при загрузке машин:", error);
             }
         };
-
         fetchCars();
     }, []);
 
     return (
         <div>
             <h2>Список машин</h2>
-            {cars.map((car) => (
-                <div key={car.id}>
-                    <h3>
-                        {car.brand} {car.model}
-                    </h3>
-                    <p>Цена: {car.price}₽</p>
-                </div>
-            ))}
+            {cars.length === 0 ? (
+                <p>Нет доступных машин</p>
+            ) : (
+                cars.map((car) => (
+                    <div key={car.Id}>
+                        <p>{car.Brand} {car.Model}</p>
+                        <p>Цена: {car.Price} ₽</p>
+                        <p>Цвет: {car.Color}</p>
+                    </div>
+                ))
+            )}
         </div>
     );
 };
