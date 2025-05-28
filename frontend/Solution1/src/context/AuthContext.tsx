@@ -1,22 +1,22 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import type { ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
-interface User {
+export interface User {
     id: string;
     fullName: string;
     email: string;
+    phoneNumber: string;
 }
 
-interface AuthContextType {
+export interface AuthContextType {
     user: User | null;
     token: string | null;
     login: (user: User, token: string) => void;
     logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(null);
 
@@ -24,15 +24,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const storedUser = localStorage.getItem("user");
         const storedToken = localStorage.getItem("token");
 
-        if (storedUser && storedToken) {
+        if (storedUser && storedUser !== "undefined") {
             try {
-                const parsedUser = JSON.parse(storedUser);
-                setUser(parsedUser);
-                setToken(storedToken);
-            } catch (err) {
-                console.error("Ошибка при разборе user из localStorage", err);
-                localStorage.clear();
+                setUser(JSON.parse(storedUser));
+            } catch {
+                localStorage.removeItem("user");
             }
+        }
+
+        if (storedToken && storedToken !== "undefined") {
+            setToken(storedToken);
         }
     }, []);
 
@@ -46,7 +47,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const logout = () => {
         setUser(null);
         setToken(null);
-        localStorage.clear();
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
     };
 
     return (
@@ -56,10 +58,4 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     );
 };
 
-export const useAuth = (): AuthContextType => {
-    const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error("useAuth must be used within an AuthProvider");
-    }
-    return context;
-};
+export const useAuth = () => useContext(AuthContext);
