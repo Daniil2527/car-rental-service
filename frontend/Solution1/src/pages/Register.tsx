@@ -42,48 +42,65 @@ const Register = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h2>Регистрация</h2>
-            <input
-                name="firstName"
-                placeholder="Имя"
-                value={form.firstName}
-                onChange={handleChange}
-                required
-            />
-            <input
-                name="lastName"
-                placeholder="Фамилия"
-                value={form.lastName}
-                onChange={handleChange}
-                required
-            />
-            <input
-                name="email"
-                type="email"
-                placeholder="Email"
-                value={form.email}
-                onChange={handleChange}
-                required
-            />
-            <input
-                name="password"
-                type="password"
-                placeholder="Пароль"
-                value={form.password}
-                onChange={handleChange}
-                required
-            />
-            <input
-                name="phoneNumber"
-                placeholder="Телефон"
-                value={form.phoneNumber}
-                onChange={handleChange}
-                required
-            />
-            <button type="submit">Зарегистрироваться</button>
-        </form>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-600 to-pink-100 font-sans px-4">
+            <form
+                onSubmit={handleSubmit}
+                className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md"
+            >
+                <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">Регистрация</h2>
+
+                <input
+                    name="firstName"
+                    placeholder="Имя"
+                    value={form.firstName}
+                    onChange={handleChange}
+                    required
+                    className="mb-4 w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-400"
+                />
+                <input
+                    name="lastName"
+                    placeholder="Фамилия"
+                    value={form.lastName}
+                    onChange={handleChange}
+                    required
+                    className="mb-4 w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-400"
+                />
+                <input
+                    name="email"
+                    type="email"
+                    placeholder="Email"
+                    value={form.email}
+                    onChange={handleChange}
+                    required
+                    className="mb-4 w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-400"
+                />
+                <input
+                    name="password"
+                    type="password"
+                    placeholder="Пароль"
+                    value={form.password}
+                    onChange={handleChange}
+                    required
+                    className="mb-4 w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-400"
+                />
+                <input
+                    name="phoneNumber"
+                    placeholder="Телефон"
+                    value={form.phoneNumber}
+                    onChange={handleChange}
+                    required
+                    className="mb-6 w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-400"
+                />
+                <button
+                    type="submit"
+                    className="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3 rounded-md transition"
+                >
+                    Зарегистрироваться
+                </button>
+            </form>
+        </div>
     );
 };
 
 export default Register;
+

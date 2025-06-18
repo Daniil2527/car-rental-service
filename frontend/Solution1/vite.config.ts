@@ -1,17 +1,17 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  css: {
+    postcss: './postcss.config.js'
+  },
   server: {
     proxy: {
-      // Прокси для всех запросов, начинающихся с "/api", на наш бэкенд (http://localhost:5123)
       "/api": {
         target: "http://localhost:5123",
-        changeOrigin: true
+        changeOrigin: true,
       }
     }
   }
 });
-
